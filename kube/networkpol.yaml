@@ -1,0 +1,49 @@
+--- 
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-frontend-to-backend
+spec:
+  podSelector:
+    matchLabels:
+      app: bk-multi
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: fr-multi
+      ports:
+        - protocol: TCP
+          port: 8082
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-to-cache
+spec:
+  podSelector:
+    matchLabels:
+      app: cache-multi
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: bk-multi
+      ports:
+        - protocol: TCP
+          port: 8083
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress

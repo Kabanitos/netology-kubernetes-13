@@ -1,0 +1,104 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: fr-multi
+  template:
+    metadata:
+      labels:
+        app: fr-multi
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool
+        env:
+          - name: HTTP_PORT
+            value: "8081"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-front
+spec:
+  selector:
+    app: fr-multi
+  ports:
+    - protocol: TCP
+      port: 8091
+      targetPort: 8081
+
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  selector:
+    matchLabels:
+      app: bk-multi
+  template:
+    metadata:
+      labels:
+        app: bk-multi
+    spec:
+      containers:
+      - name: multitool           
+        image: wbitt/network-multitool
+        env:
+          - name: HTTP_PORT
+            value: "8082"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-back
+spec:
+  selector:
+    app: bk-multi
+  ports:
+    - protocol: TCP
+      port: 8092
+      targetPort: 8082
+
+
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cache
+spec:
+  selector:
+    matchLabels:
+      app: cache-multi
+  template:
+    metadata:
+      labels:
+        app: cache-multi
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool
+        env:
+          - name: HTTP_PORT
+            value: "8083"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-cache
+spec:
+  selector:
+    app: cache-multi
+  ports:
+    - protocol: TCP
+      port: 8093
+      targetPort: 8083
